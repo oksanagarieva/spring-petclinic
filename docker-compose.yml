@@ -1,10 +1,13 @@
-version: '3.7'
+version: '2.4'
 services:
   mysql:
     image: mysql:5.7
     container_name: mysql_5_7
     ports:
       - "3306:3306"
+    networks:
+      backend:
+        ipv4_address: 172.16.238.10
     environment:
       - MYSQL_ROOT_PASSWORD=
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
@@ -13,8 +16,27 @@ services:
       - MYSQL_DATABASE=petclinic
     volumes:
       - "./conf.d:/etc/mysql/conf.d:ro"
+
   pet-clinic:
     image: pet-clinic:latest
+    depends_on:
+      - mysql
     container_name: pet-clinic
     ports:
       - "8080:8080"
+    networks:
+      backend:
+        ipv4_address: 172.16.238.11
+
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
+          gateway: 172.16.238.1
+
+  default:
+    driver: bridge
