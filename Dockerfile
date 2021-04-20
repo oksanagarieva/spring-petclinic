@@ -4,7 +4,7 @@ COPY pom.xml /home/app/
 RUN mvn clean package -f /home/app/pom.xml -X -Dcheckstyle.skip
 
 
-FROM adoptopenjdk/openjdk8:alpine-slim
+FROM openjdk:8-jre-alpine
 WORKDIR /home/app/
 COPY --from=build /home/app/target/*.jar .
 RUN chmod -R 755 .
